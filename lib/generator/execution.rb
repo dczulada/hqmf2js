@@ -92,6 +92,9 @@ module HQMF2JS
         var msrpopl = function() {
           return executeIfAvailable(hqmfjs.#{HQMF::PopulationCriteria::MSRPOPL}, patient_api);
         }
+        var msrpopl2 = function(specific_context) {
+          #{msrpopl_function(custom_functions, population_index)}
+        }
         var observ = function(specific_context) {
           #{observation_function(custom_functions, population_index)}
         }
@@ -122,7 +125,7 @@ module HQMF2JS
         }
 
         try {
-          map(patient, population, denominator, numerator, exclusion, denexcep, msrpopl, observ, occurrenceId,#{continuous_variable},stratification);
+          map(patient, population, denominator, numerator, exclusion, denexcep, msrpopl, msrpopl2, observ, occurrenceId,#{continuous_variable},stratification);
         } catch(err) {
           print(err.stack);
           throw err;
@@ -140,8 +143,25 @@ module HQMF2JS
           else
             return [];"
 
-        if (custom_functions && custom_functions[HQMF::PopulationCriteria::OBSERV])
+        if (custom_functions && custom_functions[:OBSERV])
           result = "return #{custom_functions[HQMF::PopulationCriteria::OBSERV]}(patient_api, hqmfjs)"
+        end
+
+        result
+
+      end
+
+      def self.msrpopl_function(custom_functions, population_index)
+
+        result = "
+          var observFunc = hqmfjs.#{HQMF::PopulationCriteria::MSRPOPL}
+          if (typeof(observFunc)==='function')
+            return observFunc(patient_api, specific_context);
+          else
+            return [];"
+
+        if (custom_functions && custom_functions[:MSRPOPL])
+          result = "return #{custom_functions[HQMF::PopulationCriteria::MSRPOPL]}(patient_api, hqmfjs)"
         end
 
         result
