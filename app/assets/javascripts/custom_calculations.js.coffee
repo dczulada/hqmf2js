@@ -1,12 +1,18 @@
 @hqmf.CustomCalc = {}
 
 @hqmf.CustomCalc.ADE_TTR_OBSERV = (patient, hqmfjs) ->
-  inrReadings = DURING(hqmfjs.LaboratoryTestPerformedInr(patient), hqmfjs.MeasurePeriod(patient));
+  if (typeof hqmfjs.LaboratoryTestPerformedInr == "function")
+    inrReadings = DURING(hqmfjs.LaboratoryTestPerformedInr(patient), hqmfjs.MeasurePeriod(patient));
+  else if (typeof hqmfjs.LaboratoryTestResultInr == "function")
+    inrReadings = DURING(hqmfjs.LaboratoryTestResultInr(patient), hqmfjs.MeasurePeriod(patient));
   inrReadings = new hqmf.CustomCalc.PercentTTREntries(inrReadings)
   return [inrReadings.calculatePercentTTR()]
 
 @hqmf.CustomCalc.ADE_TTR_MSRPOPL = (patient, hqmfjs) ->
-  inrReadings = DURING(hqmfjs.LaboratoryTestPerformedInr(patient), hqmfjs.MeasurePeriod(patient));
+  if (typeof hqmfjs.LaboratoryTestPerformedInr == "function")
+    inrReadings = DURING(hqmfjs.LaboratoryTestPerformedInr(patient), hqmfjs.MeasurePeriod(patient));
+  else if (typeof hqmfjs.LaboratoryTestResultInr == "function")
+    inrReadings = DURING(hqmfjs.LaboratoryTestResultInr(patient), hqmfjs.MeasurePeriod(patient));
   inrReadings = new hqmf.CustomCalc.PercentTTREntries(inrReadings)
   if (inrReadings.calculateNumberOfIntervals() > 1)
     return 1
